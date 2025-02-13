@@ -8,12 +8,14 @@ const people = ref<string[]>(
 );
 const personName = ref("");
 const selectedPerson = ref("");
-const paidAmount = ref(0);
+const paidAmount = ref();
 
 const addPerson = () => {
   //push whatever's in the input field to the people array
-  if (personName.value.trim() && !people.value.includes(personName.value)) {
-    people.value.push(personName.value);
+  const trimmedName = personName.value.trim();
+  const capsName = trimmedName.charAt(0).toUpperCase() + trimmedName.slice(1);
+  if (trimmedName && !people.value.includes(capsName)) {
+    people.value.push(capsName);
     personName.value = "";
   }
   console.log(people.value);
@@ -25,12 +27,13 @@ const formatNames = () => {
   }
   let welcomemsg = "Welcome,";
   for (let i = 0; i < people.value.length; i++) {
+    const capsName = people.value[i].charAt(0).toUpperCase() + people.value[i].slice(1);
     if (people.value.length >= 2 && i == people.value.length - 1) {
-      welcomemsg += ` and ${people.value[i]}`;
+      welcomemsg += ` and ${capsName}`;
     } else if (i !== 0) {
-      welcomemsg += `, ${people.value[i]}`;
+      welcomemsg += `, ${capsName}`;
     } else {
-      welcomemsg += ` ${people.value[i]}`;
+      welcomemsg += ` ${capsName}`;
     }
   }
   return welcomemsg;
@@ -79,8 +82,7 @@ const calculateOutstanding = () => {
 
 const addExpense = () => {
   try {
-    const numericalAmount = parseInt(paidAmount.value);
-    if (selectedPerson.value.trim() && paidAmount.value > 0) {
+    if (selectedPerson.value.trim() && isNumber(paidAmount.value)) {
       expenses.value.push({
         person: selectedPerson.value,
         amount: paidAmount.value,
@@ -94,6 +96,11 @@ const addExpense = () => {
   }
   calculateOutstanding();
 };
+
+const isNumber = (amount) => {
+  return !isNaN(parseFloat(amount)) && isFinite(amount);
+}
+
 
 const cancelOutDebts = (balances: { [key: string]: number }) => {
   const settlement = [];
@@ -184,7 +191,7 @@ watch(
     <div>
       <div>
         <select v-model="selectedPerson" id="people" class="people-dropdown">
-          <option value="" disabled selected>Who paid?</option>
+          <option v-if="!selectedPerson" value="" hidden selected>Who paid?</option>
           <option v-for="person in people" :key="person" :value="person">
             {{ person }}
           </option>
@@ -197,24 +204,34 @@ watch(
           class="expense-input"
           placeholder="How much?"
         />
-        <button @click="addExpense">Add Expense</button>
+        <button
+          @click="addExpense"
+          :disabled="!selectedPerson || !isNumber(paidAmount)"
+        >
+          Add Expense
+        </button>
       </div>
     </div>
-    <div class="spend-list">
+    <div v-if="expenses.length > 0" class="spend-list-container">
+      <div class="spend-list">
       <div v-for="(expense, name) in mappedExpenses" :key="name">
-        {{ name }} spent: ${{ expense }}
+        <strong>{{ name }}</strong> spent: ${{ expense }}
       </div>
+    </div>
     </div>
     <div>
-      <h2>Settlements:</h2>
-      <h3>
+      <h2 v-if="expenses.length > 0 && totalSpent / people.length">
         Everyone should pay ${{
           parseFloat((totalSpent / people.length).toFixed(2))
         }}
-      </h3>
-      <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
+      </h2>
+      <template class="spend-list-container">
+        <div v-if="expenses.length > 0 && totalSpent / people.length" class="pay-list">
+        <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
         {{ settlement }}
       </div>
+      </div>
+      </template>
     </div>
     <div>
       <button class="clear-btn" @click="clearAll">Clear All</button>
