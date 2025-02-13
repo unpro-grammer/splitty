@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 defineProps<{ msg: string }>();
 
-const people = ref([]);
+const people = ref<string[]>(
+  JSON.parse(localStorage.getItem("people") || "[]"),
+);
 const personName = ref("");
 const selectedPerson = ref("");
+const paidAmount = ref(0);
 
 const addPerson = () => {
   //push whatever's in the input field to the people array
-  if (personName.value.trim()) {
+  if (personName.value.trim() && !people.value.includes(personName.value)) {
     people.value.push(personName.value);
     personName.value = "";
   }
@@ -33,7 +36,125 @@ const formatNames = () => {
   return welcomemsg;
 };
 
-const count = ref(0);
+const expenses = ref<any[]>(
+  JSON.parse(localStorage.getItem("expenses") || "[]"),
+);
+const balances = ref<{ [key: string]: number }>(
+  JSON.parse(localStorage.getItem("balances") || "{}"),
+);
+
+const mappedExpenses = ref<{ [key: string]: number }>(
+  JSON.parse(localStorage.getItem("mappedExpenses") || "{}"),
+);
+
+let totalSpent = 0;
+
+const calculateOutstanding = () => {
+  mappedExpenses.value = {};
+  for (const person of people.value) {
+    mappedExpenses.value[person] = 0;
+    balances.value[person] = 0;
+    console.log(mappedExpenses.value);
+    // for (const expense of expenses.value) {
+    //   mappedExpenses.value[ex] = ;
+    // }
+  }
+  for (const expense of expenses.value) {
+    mappedExpenses.value[expense.person] += Number(expense.amount);
+  }
+
+  // calculate dues
+  totalSpent = expenses.value.reduce(
+    (sum, expense) => sum + Number(expense.amount),
+    0,
+  );
+  const numPeople = people.value.length;
+
+  const fairShare = totalSpent / numPeople;
+
+  for (const person of people.value) {
+    balances.value[person] = mappedExpenses.value[person] - fairShare;
+  }
+};
+
+const addExpense = () => {
+  try {
+    const numericalAmount = parseInt(paidAmount.value);
+    if (selectedPerson.value.trim() && paidAmount.value > 0) {
+      expenses.value.push({
+        person: selectedPerson.value,
+        amount: paidAmount.value,
+      });
+      paidAmount.value = 0;
+      selectedPerson.value = "";
+      console.log(expenses.value);
+    }
+  } catch {
+    return;
+  }
+  calculateOutstanding();
+};
+
+const cancelOutDebts = (balances: { [key: string]: number }) => {
+  const settlement = [];
+  const remainingBalances = { ...balances };
+
+  for (const person1 of people.value) {
+    if (remainingBalances[person1] === 0) continue;
+
+    for (const person2 of people.value) {
+      if (remainingBalances[person2] === 0 || person1 === person2) continue;
+
+      const debt1 = -remainingBalances[person1];
+      const debt2 = -remainingBalances[person2];
+
+      if (debt1 > 0 && debt2 < 0) {
+        const settlementAmount = Math.min(debt1, Math.abs(debt2));
+
+        // person1 pays person2
+        remainingBalances[person1] -= settlementAmount;
+        remainingBalances[person2] += settlementAmount;
+
+        settlement.push(
+          `${person1} pays $${parseFloat(settlementAmount.toFixed(2))} to ${person2}`,
+        );
+
+        if (
+          remainingBalances[person1] === 0 ||
+          remainingBalances[person2] === 0
+        )
+          break;
+      }
+    }
+  }
+
+  return settlement;
+};
+
+const clearAll = () => {
+  people.value = [];
+  personName.value = "";
+  selectedPerson.value = "";
+  paidAmount.value = 0;
+  expenses.value = [];
+  balances.value = {};
+  mappedExpenses.value = {};
+  totalSpent = 0;
+};
+
+watch(
+  [people, expenses, balances, mappedExpenses],
+  () => {
+    localStorage.setItem("people", JSON.stringify(people.value));
+    localStorage.setItem("expenses", JSON.stringify(expenses.value));
+    localStorage.setItem("balances", JSON.stringify(balances.value));
+    localStorage.setItem(
+      "mappedExpenses",
+      JSON.stringify(mappedExpenses.value),
+    );
+  },
+  { deep: true },
+);
 </script>
 
 <template>
@@ -68,34 +189,37 @@ const count = ref(0);
             {{ person }}
           </option>
         </select>
+        <span class="dollarPrefix">$</span>
         <input
-        v-model="personName"
-        @keydown.enter="addPerson"
-        type="text"
-        class="expense-input"
-        placeholder="How much?"
-      />
-      <button @click="addPerson">Add Expense</button>
+          v-model="paidAmount"
+          @keydown.enter="addExpense"
+          type="text"
+          class="expense-input"
+          placeholder="How much?"
+        />
+        <button @click="addExpense">Add Expense</button>
       </div>
-      
+    </div>
+    <div class="spend-list">
+      <div v-for="(expense, name) in mappedExpenses" :key="name">
+        {{ name }} spent: ${{ expense }}
+      </div>
+    </div>
+    <div>
+      <h2>Settlements:</h2>
+      <h3>
+        Everyone should pay ${{
+          parseFloat((totalSpent / people.length).toFixed(2))
+        }}
+      </h3>
+      <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
+        {{ settlement }}
+      </div>
+    </div>
+    <div>
+      <button class="clear-btn" @click="clearAll">Clear All</button>
     </div>
   </div>
-
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Learn more about IDE Support for Vue in the
-    <a
-      href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support"
-      target="_blank"
-      >Vue Docs Scaling up Guide</a
-    >.
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
 
 <style scoped>
