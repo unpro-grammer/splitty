@@ -9,6 +9,7 @@ const people = ref<string[]>(
 const personName = ref("");
 const selectedPerson = ref("");
 const paidAmount = ref();
+const notes = ref("");
 
 const addPerson = () => {
   //push whatever's in the input field to the people array
@@ -82,13 +83,15 @@ const calculateOutstanding = () => {
 
 const addExpense = () => {
   try {
-    if (selectedPerson.value.trim() && isNumber(paidAmount.value)) {
+    if (selectedPerson.value.trim() && isNumber(paidAmount.value) && paidAmount.value > 0) {
       expenses.value.push({
         person: selectedPerson.value,
         amount: paidAmount.value,
+        notes: notes.value,
       });
       paidAmount.value = 0;
       selectedPerson.value = "";
+      notes.value = "";
       console.log(expenses.value);
     }
   } catch {
@@ -97,7 +100,7 @@ const addExpense = () => {
   calculateOutstanding();
 };
 
-const isNumber = (amount) => {
+const isNumber = (amount: any) => {
   return !isNaN(parseFloat(amount)) && isFinite(amount);
 }
 
@@ -138,6 +141,11 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
   return settlement;
 };
 
+const removeExpense = (index: number) => {
+  expenses.value.splice(index, 1);
+  calculateOutstanding();
+};
+
 const clearAll = () => {
   people.value = [];
   personName.value = "";
@@ -168,7 +176,7 @@ watch(
   <div id="app">
     <div>
       <div>
-        <h1>Expense Tracker</h1>
+        <h1>Expense Splitter</h1>
 
         <!-- add participants -->
         <div>
@@ -187,29 +195,58 @@ watch(
   <div>{{ formatNames() }}</div>
 
   <div v-if="people.length > 1" class="card">
+  <!-- <div class="card"> -->
     <h2>Enter Expenses:</h2>
     <div>
-      <div>
+      <div class="inputs-container">
         <select v-model="selectedPerson" id="people" class="people-dropdown">
           <option v-if="!selectedPerson" value="" hidden selected>Who paid?</option>
           <option v-for="person in people" :key="person" :value="person">
             {{ person }}
           </option>
         </select>
-        <span class="dollarPrefix">$</span>
+        <div>
+          <span class="dollarPrefix">$</span>
+          <input
+            v-model="paidAmount"
+            @keydown.enter="addExpense"
+            type="text"
+            class="expense-input"
+            placeholder="How much?"
+          />
+        </div>
         <input
-          v-model="paidAmount"
+          v-model="notes"
           @keydown.enter="addExpense"
           type="text"
-          class="expense-input"
-          placeholder="How much?"
+          class="notes-inputs"
+          placeholder="Details (opt)"
         />
         <button
           @click="addExpense"
-          :disabled="!selectedPerson || !isNumber(paidAmount)"
+          :disabled="!selectedPerson || !isNumber(paidAmount) || paidAmount <= 0"
         >
           Add Expense
         </button>
+      </div>
+    </div>
+    <div v-if="expenses.length > 0" class="all-expenses">
+      <div class="all-expenses-list">
+        <div>
+          <h3 class="all-expenses-header">
+          All Expenses:
+        </h3>
+        </div>
+        <div v-for="(expense, index) in expenses" :key="index" class="expense-entry">
+          <span class="expense-text">
+            <strong>{{ expense.person }}</strong> paid: ${{ expense.amount }}{{ expense.notes ? ` (${expense.notes})` : "" }}
+          </span>
+          <button @click="removeExpense(index)" class="delete-btn">
+            <span>
+              &times;
+            </span>
+          </button>
+        </div>
       </div>
     </div>
     <div v-if="expenses.length > 0" class="spend-list-container">

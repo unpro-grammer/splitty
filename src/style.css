@@ -140,7 +140,7 @@ option:focus {
 }
 
 .spend-list {
-  background-color: #42354d;
+  background-color: #1a1a1a;
   padding: 0.6em 0.6em 0.6em 0.6em;
   border-radius: 8px;
   width: 40%;
@@ -159,3 +159,84 @@ option:focus {
   margin-bottom: 3rem;
 }
 
+.notes-inputs {
+  width: 6em;
+}
+
+.all-expenses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1.2rem;
+  max-width: 100%;
+}
+
+.all-expenses-list {
+  display: inline-block;
+  background-color: #1a1a1a;
+  padding: 1em 2em 0em 0.8em;
+  border-radius: 8px;
+  align-self: center;
+  margin-top: 1.2rem;
+  margin-bottom: 3rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn {
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
+  margin-left: auto;
+}
+
+.delete-btn:hover {
+  filter: drop-shadow(0 0 0.6em #646cffaa);
+}
+
+.delete-btn span {
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0.3rem;
+}
+
+.expense-entry {
+  padding: 0.6rem;
+  margin-bottom: 1.2rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #42354d;
+  border-radius: 8px;
+}
+
+.expense-text {
+  text-align: left;
+}
+
+.all-expenses-header {
+  width: 100%;
+  padding: 0 0 0 0.8rem;
+  border-radius: 8px;
+  margin-top: 0;
+  margin-top: 0;
+}
+
+.inputs-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.2rem;
+}
