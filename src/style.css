@@ -57,6 +57,10 @@ button:disabled:hover {
   border-color: transparent;
   filter: drop-shadow(0 0 2em #646cff33);
 }
+button:active {
+  opacity: 60%;
+  transition: opacity 0.2s;
+}
 
 .card {
   padding: 2em;
@@ -92,7 +96,7 @@ input {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #313033;
   cursor: text;
   transition: border-color 0.25s;
 }
@@ -121,7 +125,7 @@ option:focus {
 }
 
 .expense-input {
-  width: 6em;
+  width: 5.9em;
 }
 
 .dollarPrefix {
@@ -130,7 +134,7 @@ option:focus {
 }
 
 .clear-btn {
-  margin-top: 8rem;
+  margin-top: 4rem;
 }
 
 .spend-list-container {
@@ -145,8 +149,7 @@ option:focus {
   border-radius: 8px;
   width: 40%;
   align-self: center;
-  margin-top: 1.2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .pay-list {
@@ -160,7 +163,7 @@ option:focus {
 }
 
 .notes-inputs {
-  width: 6em;
+  width: 5.9em;
 }
 
 .all-expenses {
@@ -200,7 +203,7 @@ option:focus {
 }
 
 .delete-btn:hover {
-  filter: drop-shadow(0 0 0.6em #646cffaa);
+  filter: drop-shadow(0 0 0.8em #646cffaa);
 }
 
 .delete-btn span {

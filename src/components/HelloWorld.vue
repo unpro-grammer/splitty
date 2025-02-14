@@ -28,7 +28,8 @@ const formatNames = () => {
   }
   let welcomemsg = "Welcome,";
   for (let i = 0; i < people.value.length; i++) {
-    const capsName = people.value[i].charAt(0).toUpperCase() + people.value[i].slice(1);
+    const capsName =
+      people.value[i].charAt(0).toUpperCase() + people.value[i].slice(1);
     if (people.value.length >= 2 && i == people.value.length - 1) {
       welcomemsg += ` and ${capsName}`;
     } else if (i !== 0) {
@@ -54,7 +55,7 @@ const mappedExpenses = ref<{ [key: string]: number }>(
 let totalSpent = 0;
 
 const calculateOutstanding = () => {
-  mappedExpenses.value = {};
+  mappedExpenses.value = {}; // people-wise expenses
   for (const person of people.value) {
     mappedExpenses.value[person] = 0;
     balances.value[person] = 0;
@@ -77,19 +78,23 @@ const calculateOutstanding = () => {
   const fairShare = totalSpent / numPeople;
 
   for (const person of people.value) {
-    balances.value[person] = mappedExpenses.value[person] - fairShare;
+    balances.value[person] = mappedExpenses.value[person] - fairShare; // surplus of payment
   }
 };
 
 const addExpense = () => {
   try {
-    if (selectedPerson.value.trim() && isNumber(paidAmount.value) && paidAmount.value > 0) {
+    if (
+      selectedPerson.value.trim() &&
+      isNumber(paidAmount.value) &&
+      paidAmount.value > 0
+    ) {
       expenses.value.push({
         person: selectedPerson.value,
         amount: paidAmount.value,
         notes: notes.value,
       });
-      paidAmount.value = 0;
+      paidAmount.value = null;
       selectedPerson.value = "";
       notes.value = "";
       console.log(expenses.value);
@@ -102,8 +107,7 @@ const addExpense = () => {
 
 const isNumber = (amount: any) => {
   return !isNaN(parseFloat(amount)) && isFinite(amount);
-}
-
+};
 
 const cancelOutDebts = (balances: { [key: string]: number }) => {
   const settlement = [];
@@ -132,8 +136,9 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
         if (
           remainingBalances[person1] === 0 ||
           remainingBalances[person2] === 0
-        )
+        ) {
           break;
+        }
       }
     }
   }
@@ -150,7 +155,7 @@ const clearAll = () => {
   people.value = [];
   personName.value = "";
   selectedPerson.value = "";
-  paidAmount.value = 0;
+  paidAmount.value = null;
   expenses.value = [];
   balances.value = {};
   mappedExpenses.value = {};
@@ -179,15 +184,16 @@ watch(
         <h1>Expense Splitter</h1>
 
         <!-- add participants -->
-        <div>
+        <div class="items-center mablet:flex-col">
           <input
             v-model="personName"
             @keydown.enter="addPerson"
             type="text"
+            class="mablet:ml-5"
             placeholder="New Participant"
           />
 
-          <button @click="addPerson">Add Person</button>
+          <button class="mablet:mt-3" @click="addPerson">Add Person</button>
         </div>
       </div>
     </div>
@@ -195,23 +201,29 @@ watch(
   <div>{{ formatNames() }}</div>
 
   <div v-if="people.length > 1" class="card">
-  <!-- <div class="card"> -->
+    <!-- <div class="card"> -->
     <h2>Enter Expenses:</h2>
     <div>
-      <div class="inputs-container">
-        <select v-model="selectedPerson" id="people" class="people-dropdown">
-          <option v-if="!selectedPerson" value="" hidden selected>Who paid?</option>
+      <div class="mablet:flex-col self-center inputs-container">
+        <select
+          v-model="selectedPerson"
+          id="people"
+          class="mablet:ml-4.5 people-dropdown"
+        >
+          <option v-if="!selectedPerson" value="" hidden selected>
+            Who paid?
+          </option>
           <option v-for="person in people" :key="person" :value="person">
             {{ person }}
           </option>
         </select>
-        <div>
+        <div class="mablet:mt-3.5">
           <span class="dollarPrefix">$</span>
           <input
             v-model="paidAmount"
             @keydown.enter="addExpense"
             type="text"
-            class="expense-input"
+            class="mablet:ml-1 expense-input"
             placeholder="How much?"
           />
         </div>
@@ -219,12 +231,15 @@ watch(
           v-model="notes"
           @keydown.enter="addExpense"
           type="text"
-          class="notes-inputs"
+          class="mablet:ml-5 mablet:mt-3 notes-inputs"
           placeholder="Details (opt)"
         />
         <button
           @click="addExpense"
-          :disabled="!selectedPerson || !isNumber(paidAmount) || paidAmount <= 0"
+          class="mablet:mt-3"
+          :disabled="
+            !selectedPerson || !isNumber(paidAmount) || paidAmount <= 0
+          "
         >
           Add Expense
         </button>
@@ -233,28 +248,29 @@ watch(
     <div v-if="expenses.length > 0" class="all-expenses">
       <div class="all-expenses-list">
         <div>
-          <h3 class="all-expenses-header">
-          All Expenses:
-        </h3>
+          <h3 class="all-expenses-header">All Expenses:</h3>
         </div>
-        <div v-for="(expense, index) in expenses" :key="index" class="expense-entry">
+        <div
+          v-for="(expense, index) in expenses"
+          :key="index"
+          class="expense-entry"
+        >
           <span class="expense-text">
-            <strong>{{ expense.person }}</strong> paid: ${{ expense.amount }}{{ expense.notes ? ` (${expense.notes})` : "" }}
+            <strong>{{ expense.person }}</strong> paid: ${{ expense.amount
+            }}{{ expense.notes ? ` (${expense.notes})` : "" }}
           </span>
           <button @click="removeExpense(index)" class="delete-btn">
-            <span>
-              &times;
-            </span>
+            <span> &times; </span>
           </button>
         </div>
       </div>
     </div>
     <div v-if="expenses.length > 0" class="spend-list-container">
       <div class="spend-list">
-      <div v-for="(expense, name) in mappedExpenses" :key="name">
-        <strong>{{ name }}</strong> spent: ${{ expense }}
+        <div v-for="(expense, name) in mappedExpenses" :key="name">
+          <strong>{{ name }}</strong> spent: ${{ expense }}
+        </div>
       </div>
-    </div>
     </div>
     <div>
       <h2 v-if="expenses.length > 0 && totalSpent / people.length">
@@ -263,11 +279,14 @@ watch(
         }}
       </h2>
       <template class="spend-list-container">
-        <div v-if="expenses.length > 0 && totalSpent / people.length" class="pay-list">
-        <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
-        {{ settlement }}
-      </div>
-      </div>
+        <div
+          v-if="expenses.length > 0 && totalSpent / people.length"
+          class="pay-list"
+        >
+          <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
+            {{ settlement }}
+          </div>
+        </div>
       </template>
     </div>
     <div>
