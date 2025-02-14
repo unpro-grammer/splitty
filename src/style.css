@@ -252,3 +252,19 @@ option:focus {
   justify-content: center;
   margin-top: 1.2rem;
 }
+
+/* diff filter behaviours on mobile */
+@media (max-width: 768px) {
+  button:hover {
+    filter: none;
+  }
+  button:disabled:hover {
+    filter: none;
+  }
+  button:active {
+    filter: drop-shadow(0 0 2em #646cffaa);
+  }
+  .delete-btn:hover {
+    filter: none;
+  }
+}
