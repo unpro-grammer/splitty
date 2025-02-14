@@ -1,8 +1,22 @@
-# Vue 3 + TypeScript + Vite
+# Splitting Costs
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Set up a group of people.
 
-`npx prettier --write .`
-^^format
+Further functionalities become available with 2+ participants.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+Track each expense, with the assumption that all expenses contribute towards group activities and should be split equally among the group.
+
+Data persists across sessions unless cleared.
+
+## Technologies Used
+
+Made with Vue 3 + TypeScript + Vite + Tailwind.
+
+## Usage
+
+In the project directory:
+`npm install`
+`npm run dev`
+
+`npx prettier --write .` to format.
+
