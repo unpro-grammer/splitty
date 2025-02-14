@@ -272,7 +272,7 @@ watch(
       </div>
     </div>
     <div v-if="expenses.length > 0" class="spend-list-container">
-      <div class="min-w-[60%] spend-list">
+      <div class="min-w-[70%] spend-list">
         <div v-for="(expense, name) in mappedExpenses" :key="name">
           <strong>{{ name }}</strong> spent: ${{ expense }}
         </div>
