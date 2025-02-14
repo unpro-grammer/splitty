@@ -287,7 +287,7 @@ watch(
       <template class="spend-list-container">
         <div
           v-if="expenses.length > 0 && totalSpent / people.length"
-          class="pay-list"
+          class="min-w-[80%] pay-list"
         >
           <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
             {{ settlement }}
