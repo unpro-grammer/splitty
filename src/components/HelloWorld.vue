@@ -119,15 +119,19 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
     for (const person2 of people.value) {
       if (remainingBalances[person2] === 0 || person1 === person2) continue;
 
-      const debt1 = -remainingBalances[person1];
+      const debt1 = -remainingBalances[person1]; // if person1 paid $10 more than they should, they have -$10 debt
       const debt2 = -remainingBalances[person2];
+      console.log('b4remaining balances1', person1, remainingBalances[person1]);
+      console.log('b4remaining balances2', person2, remainingBalances[person2]);
 
       if (debt1 > 0 && debt2 < 0) {
         const settlementAmount = Math.min(debt1, Math.abs(debt2));
 
         // person1 pays person2
-        remainingBalances[person1] -= settlementAmount;
-        remainingBalances[person2] += settlementAmount;
+        remainingBalances[person1] += settlementAmount; // person1's 'surplus' ++ (paying off debt)
+        remainingBalances[person2] -= settlementAmount; // person2's 'surplus' -- (being paid)
+        console.log('remaining balances1', person1, remainingBalances[person1]);
+        console.log('remaining balances2', person2, remainingBalances[person2]);
 
         settlement.push(
           `${person1} pays $${parseFloat(settlementAmount.toFixed(2))} to ${person2}`,
@@ -141,6 +145,7 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
         }
       }
     }
+    console.log('FINALS SHOULD BE 0', remainingBalances);
   }
 
   return settlement;
