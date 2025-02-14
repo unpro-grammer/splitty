@@ -145,21 +145,21 @@ option:focus {
 
 .spend-list {
   background-color: #1a1a1a;
-  padding: 0.6em 0.6em 0.6em 0.6em;
+  padding: 0.8em 0.8em 0.8em 0.8em;
   border-radius: 8px;
   width: 40%;
   align-self: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.4rem;
 }
 
 .pay-list {
   background-color: #42354d;
-  padding: 0.6em 0.6em 0.6em 0.6em;
+  padding: 0.8em 0.8em 0.8em 0.8em;
   border-radius: 8px;
   width: 60%;
   align-self: center;
   margin-top: 1.2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2.4rem;
 }
 
 .notes-inputs {
@@ -177,11 +177,11 @@ option:focus {
 .all-expenses-list {
   display: inline-block;
   background-color: #1a1a1a;
-  padding: 1em 2em 0em 0.8em;
+  padding: 1.2em 2.2em 0.2em 1em;
   border-radius: 8px;
   align-self: center;
   margin-top: 1.2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2.4rem;
   align-items: center;
   justify-content: center;
 }

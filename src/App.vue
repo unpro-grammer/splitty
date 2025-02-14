@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
+import Splitter from "./components/Splitter.vue";
 </script>
 
 <template>
-  <HelloWorld msg="Vite + Vue" />
+  <Splitter msg="Vite + Vue" />
 </template>
 
 <style scoped>

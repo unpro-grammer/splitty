@@ -121,8 +121,6 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
 
       const debt1 = -remainingBalances[person1]; // if person1 paid $10 more than they should, they have -$10 debt
       const debt2 = -remainingBalances[person2];
-      console.log('b4remaining balances1', person1, remainingBalances[person1]);
-      console.log('b4remaining balances2', person2, remainingBalances[person2]);
 
       if (debt1 > 0 && debt2 < 0) {
         const settlementAmount = Math.min(debt1, Math.abs(debt2));
@@ -130,8 +128,6 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
         // person1 pays person2
         remainingBalances[person1] += settlementAmount; // person1's 'surplus' ++ (paying off debt)
         remainingBalances[person2] -= settlementAmount; // person2's 'surplus' -- (being paid)
-        console.log('remaining balances1', person1, remainingBalances[person1]);
-        console.log('remaining balances2', person2, remainingBalances[person2]);
 
         settlement.push(
           `${person1} pays $${parseFloat(settlementAmount.toFixed(2))} to ${person2}`,
@@ -145,9 +141,14 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
         }
       }
     }
-    console.log('FINALS SHOULD BE 0', remainingBalances);
+    
   }
-
+  Object.entries(remainingBalances).forEach(([person, balance]) => {
+    if (balance !== 0) {
+      console.error('Individual not balanced')
+      console.log('remaining balances', person, balance);
+    }
+  });
   return settlement;
 };
 
@@ -251,7 +252,7 @@ watch(
       </div>
     </div>
     <div v-if="expenses.length > 0" class="all-expenses">
-      <div class="all-expenses-list">
+      <div class="min-w-[50%] all-expenses-list">
         <div>
           <h3 class="all-expenses-header">All Expenses:</h3>
         </div>
@@ -271,7 +272,7 @@ watch(
       </div>
     </div>
     <div v-if="expenses.length > 0" class="spend-list-container">
-      <div class="spend-list">
+      <div class="min-w-[60%] spend-list">
         <div v-for="(expense, name) in mappedExpenses" :key="name">
           <strong>{{ name }}</strong> spent: ${{ expense }}
         </div>
