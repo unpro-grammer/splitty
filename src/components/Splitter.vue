@@ -18,6 +18,7 @@ const addPerson = () => {
   if (trimmedName && !people.value.includes(capsName)) {
     people.value.push(capsName);
     personName.value = "";
+    calculateOutstanding();
   }
   console.log(people.value);
 };
@@ -78,7 +79,7 @@ const calculateOutstanding = () => {
   const fairShare = totalSpent / numPeople;
 
   for (const person of people.value) {
-    balances.value[person] = mappedExpenses.value[person] - fairShare; // surplus of payment
+    balances.value[person] = Number((mappedExpenses.value[person] - fairShare).toFixed(2)); // surplus of payment
   }
 };
 
@@ -111,18 +112,19 @@ const isNumber = (amount: any) => {
 
 const cancelOutDebts = (balances: { [key: string]: number }) => {
   const settlement = [];
-  const remainingBalances = { ...balances };
+  const remainingSurplus = { ...balances };
 
   for (const person1 of people.value) {
-    if (remainingBalances[person1] === 0) continue;
+    // check if person1 owes
+    if (remainingSurplus[person1] >= 0) continue; // does not owe
 
     for (const person2 of people.value) {
-      if (remainingBalances[person2] === 0 || person1 === person2) continue;
+      if (remainingSurplus[person2] <= 0 || person1 === person2) continue; // if person2 is not owed anything
       console.log('person1', person1)
       console.log('person2', person2)
 
-      const debt1 = -remainingBalances[person1]; // if person1 paid $10 more than they should, they have -$10 debt
-      const debt2 = -remainingBalances[person2];
+      const debt1 = -remainingSurplus[person1]; // if person1 paid $10 more than they should, they have -$10 debt
+      const debt2 = -remainingSurplus[person2];
       console.log('debt1', debt1)
       console.log('debt2', debt2)
 
@@ -130,8 +132,8 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
         const settlementAmount = Math.min(debt1, Math.abs(debt2));
 
         // person1 pays person2
-        remainingBalances[person1] += settlementAmount; // person1's 'surplus' ++ (paying off debt)
-        remainingBalances[person2] -= settlementAmount; // person2's 'surplus' -- (being paid)
+        remainingSurplus[person1] += settlementAmount; // person1's 'surplus' ++ (paying off debt)
+        remainingSurplus[person2] -= settlementAmount; // person2's 'surplus' -- (being paid)
 
         console.log(`${person1} pays $${parseFloat(settlementAmount.toFixed(2))} to ${person2}`)
         settlement.push(
@@ -139,13 +141,13 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
         );
 
         // if the current person has finished paying off their owed amount, move on to the next person
-        if (remainingBalances[person1] === 0) {
+        if (remainingSurplus[person1] === 0) {
           break;
         }
       }
     } 
   }
-  Object.entries(remainingBalances).forEach(([person, balance]) => {
+  Object.entries(remainingSurplus).forEach(([person, balance]) => {
     if (balance !== 0) {
       console.error('Individual not balanced')
       console.log('remaining balances', person, balance);
@@ -186,7 +188,6 @@ watch(
 
 onMounted(() => {
   calculateOutstanding();
-  cancelOutDebts(balances.value);
 });
 </script>
 
@@ -272,8 +273,8 @@ onMounted(() => {
             <strong>{{ expense.person }}</strong> paid: ${{ expense.amount
             }}{{ expense.notes ? ` (${expense.notes})` : "" }}
           </span>
-          <button @click="removeExpense(index)" class="delete-btn">
-            <span> &times; </span>
+          <button @click="removeExpense(index)" class="m-0 p-0 min-w-6.5 max-w-6.5 delete-btn">
+            <span class="p-0 m-0"> &times; </span>
           </button>
         </div>
       </div>

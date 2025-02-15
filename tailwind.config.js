@@ -6,6 +6,7 @@ export default {
       spacing: {
         3.5: "0.8rem",
         4.5: "1.1rem",
+        6.5: '1.6rem',
       },
       colors: {
         "murky-purple": "#42354d",
@@ -15,9 +16,9 @@ export default {
         laptop: { min: "1200px", max: "1440px" },
         "tablet-r": { min: "1024px", max: "1200px" },
         tablet: { min: "768px", max: "1024px" },
-        mobile: { min: "320px", max: "768px" },
+        mobile: { max: "768px" },
 
-        mablet: { min: "320px", max: "1024px" },
+        mablet: { max: "1024px" },
       },
     },
   },
