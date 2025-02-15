@@ -208,7 +208,7 @@ onMounted(() => {
             placeholder="New Participant"
           />
 
-          <button class="mobile:mt-3" @click="addPerson">Add Person</button>
+          <button class="mobile:mt-3 min-h-12" @click="addPerson">Add Person</button>
         </div>
       </div>
     </div>
@@ -223,7 +223,7 @@ onMounted(() => {
         <select
           v-model="selectedPerson"
           id="people"
-          class="mobile:ml-4.5 border-4 p-2 people-dropdown"
+          class="mobile:ml-4.5 border-4 p-2 min-w-[8.5rem] people-dropdown"
         >
           <option v-if="!selectedPerson" value="" hidden selected>
             Who paid?
@@ -251,7 +251,7 @@ onMounted(() => {
         />
         <button
           @click="addExpense"
-          class="mobile:mt-3"
+          class="mobile:mt-3 min-h-12"
           :disabled="
             !selectedPerson || !isNumber(paidAmount) || paidAmount <= 0
           "
@@ -305,7 +305,7 @@ onMounted(() => {
       </template>
     </div>
     <div>
-      <button class="clear-btn" @click="clearAll">Clear All</button>
+      <button class="clear-btn min-h-12" @click="clearAll">Clear All</button>
     </div>
   </div>
 </template>
