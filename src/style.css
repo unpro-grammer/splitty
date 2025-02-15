@@ -43,6 +43,8 @@ h1 {
 }
 
 button {
+  min-height: 2.8rem;
+  align-items: center;
   color: rgba(255, 255, 255, 0.87);
   border-radius: 8px;
   border: 1px solid transparent;
@@ -97,9 +99,10 @@ button:active {
 }
 
 input {
+  height: 2.6rem;
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  padding: 0 1.2em;
   margin-right: 1.2em;
   font-size: 16px;
   font-weight: 500;
@@ -134,7 +137,8 @@ option:focus {
 }
 
 .expense-input {
-  width: 5.9em;
+  width: auto;
+  max-width: 5.9em;
 }
 
 .dollarPrefix {

@@ -203,6 +203,7 @@ onMounted(() => {
             v-model="personName"
             @keydown.enter="addPerson"
             type="text"
+            maxlength="24"
             class="mobile:ml-4.5"
             placeholder="New Participant"
           />
@@ -218,11 +219,11 @@ onMounted(() => {
     <!-- <div class="card"> -->
     <h2>Enter Expenses:</h2>
     <div>
-      <div class="mablet:flex-col self-center inputs-container">
+      <div class="mobile:flex-col self-center inputs-container">
         <select
           v-model="selectedPerson"
           id="people"
-          class="mablet:ml-4.5 people-dropdown"
+          class="mobile:ml-4.5 people-dropdown"
         >
           <option v-if="!selectedPerson" value="" hidden selected>
             Who paid?
@@ -231,13 +232,13 @@ onMounted(() => {
             {{ person }}
           </option>
         </select>
-        <div class="mablet:mt-3.5">
-          <span class="dollarPrefix">$</span>
+        <div class="mobile:mt-3.5 flex flex-row">
+          <span class="self-center dollarPrefix">$</span>
           <input
             v-model="paidAmount"
             @keydown.enter="addExpense"
             type="text"
-            class="mablet:ml-1 expense-input"
+            class="mobile:ml-1 expense-input"
             placeholder="How much?"
           />
         </div>
@@ -245,12 +246,12 @@ onMounted(() => {
           v-model="notes"
           @keydown.enter="addExpense"
           type="text"
-          class="mablet:ml-5 mablet:mt-3 notes-inputs"
+          class="mobile:ml-5 mobile:mt-3 notes-inputs"
           placeholder="Details (opt)"
         />
         <button
           @click="addExpense"
-          class="mablet:mt-3"
+          class="mobile:mt-3"
           :disabled="
             !selectedPerson || !isNumber(paidAmount) || paidAmount <= 0
           "
