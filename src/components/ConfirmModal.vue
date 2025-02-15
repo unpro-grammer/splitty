@@ -4,10 +4,10 @@
       <h2 class="text-lg text-almost-black font-semibold mb-4">Are you sure?</h2>
       <p class="text-almost-black mb-6">This action cannot be undone.</p>
       <div class="flex justify-center space-x-4">
-        <button @click="confirm" class="px-4 py-2 bg-[#625480] text-[#f0f0f0] rounded hover:opacity-90 hover:border-[#A294C0] hover:filter-none">
+        <button @click="confirm" class="px-4 py-2 bg-[#625480] text-[#f0f0f0] rounded hover:opacity-90 hover:border-almost-white hover:filter-none">
           Yes, clear all
         </button>
-        <button @click="cancel" class="px-4 py-2 bg-gray-600 text-[#f0f0f0] rounded hover:opacity-90 hover:border-[#A294C0] hover:filter-none">
+        <button @click="cancel" class="px-4 py-2 bg-gray-600 text-[#f0f0f0] rounded hover:opacity-90 hover:border-almost-white hover:filter-none">
           Cancel
         </button>
       </div>
