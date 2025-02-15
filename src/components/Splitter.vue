@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 defineProps<{ msg: string }>();
 
@@ -118,9 +118,13 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
 
     for (const person2 of people.value) {
       if (remainingBalances[person2] === 0 || person1 === person2) continue;
+      console.log('person1', person1)
+      console.log('person2', person2)
 
       const debt1 = -remainingBalances[person1]; // if person1 paid $10 more than they should, they have -$10 debt
       const debt2 = -remainingBalances[person2];
+      console.log('debt1', debt1)
+      console.log('debt2', debt2)
 
       if (debt1 > 0 && debt2 < 0) {
         const settlementAmount = Math.min(debt1, Math.abs(debt2));
@@ -129,19 +133,17 @@ const cancelOutDebts = (balances: { [key: string]: number }) => {
         remainingBalances[person1] += settlementAmount; // person1's 'surplus' ++ (paying off debt)
         remainingBalances[person2] -= settlementAmount; // person2's 'surplus' -- (being paid)
 
+        console.log(`${person1} pays $${parseFloat(settlementAmount.toFixed(2))} to ${person2}`)
         settlement.push(
           `${person1} pays $${parseFloat(settlementAmount.toFixed(2))} to ${person2}`,
         );
 
-        if (
-          remainingBalances[person1] === 0 ||
-          remainingBalances[person2] === 0
-        ) {
+        // if the current person has finished paying off their owed amount, move on to the next person
+        if (remainingBalances[person1] === 0) {
           break;
         }
       }
-    }
-    
+    } 
   }
   Object.entries(remainingBalances).forEach(([person, balance]) => {
     if (balance !== 0) {
@@ -181,6 +183,11 @@ watch(
   },
   { deep: true },
 );
+
+onMounted(() => {
+  calculateOutstanding();
+  cancelOutDebts(balances.value);
+});
 </script>
 
 <template>
