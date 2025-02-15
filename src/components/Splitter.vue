@@ -113,7 +113,7 @@
         </div>
       </template>
     </div>
-    <div>
+    <div class="pb-10">
       <button class="clear-btn min-h-12" @click="showModal = true">Clear All</button>
     </div>
   </div>
