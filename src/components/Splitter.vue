@@ -198,16 +198,16 @@ onMounted(() => {
         <h1>Expense Splitter</h1>
 
         <!-- add participants -->
-        <div class="items-center mablet:flex-col">
+        <div class="items-center mobile:flex mobile:flex-col">
           <input
             v-model="personName"
             @keydown.enter="addPerson"
             type="text"
-            class="mablet:ml-5"
+            class="mobile:ml-4.5"
             placeholder="New Participant"
           />
 
-          <button class="mablet:mt-3" @click="addPerson">Add Person</button>
+          <button class="mobile:mt-3" @click="addPerson">Add Person</button>
         </div>
       </div>
     </div>
