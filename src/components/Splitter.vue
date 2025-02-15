@@ -223,7 +223,7 @@ onMounted(() => {
         <select
           v-model="selectedPerson"
           id="people"
-          class="mobile:ml-4.5 people-dropdown"
+          class="mobile:ml-4.5 border-4 p-2 people-dropdown"
         >
           <option v-if="!selectedPerson" value="" hidden selected>
             Who paid?

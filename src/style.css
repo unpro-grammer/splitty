@@ -43,7 +43,7 @@ h1 {
 }
 
 button {
-  min-height: 2.8rem;
+  min-height: 2.9rem;
   align-items: center;
   color: rgba(255, 255, 255, 0.87);
   border-radius: 8px;
@@ -99,7 +99,7 @@ button:active {
 }
 
 input {
-  height: 2.6rem;
+  height: 2.76rem;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0 1.2em;
