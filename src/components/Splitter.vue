@@ -83,8 +83,8 @@
             <strong>{{ expense.person }}</strong> paid: ${{ expense.amount
             }}{{ expense.notes ? ` (${expense.notes})` : "" }}
           </span>
-          <button @click="removeExpense(index)" class="m-0 p-0 min-w-6.5 max-w-6.5 delete-btn">
-            <span class="p-0 m-0"> &times; </span>
+          <button @click="removeExpense(index)" class="m-0 p-0 min-w-6.5 max-w-6.5 delete-btn items-center justify-center">
+            <span class="p-0 m-0 text-sm self-center"> &times; </span>
           </button>
         </div>
       </div>

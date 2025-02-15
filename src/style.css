@@ -222,7 +222,7 @@ option:focus {
 .delete-btn span {
   justify-content: center;
   align-items: center;
-  padding-bottom: 0.3rem;
+  padding-bottom: 0.2rem;
 }
 
 .expense-entry {
