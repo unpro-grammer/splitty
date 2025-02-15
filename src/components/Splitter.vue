@@ -1,7 +1,131 @@
+<template>
+  <ConfirmModal :show="showModal" @confirm="clearAll" @cancel="showModal = false">
+  </ConfirmModal>
+  <div id="app">
+    <div>
+      <div>
+        <h1>Expense Splitter</h1>
+
+        <!-- add participants -->
+        <div class="items-center mobile:flex mobile:flex-col">
+          <input
+            v-model="personName"
+            @keydown.enter="addPerson"
+            type="text"
+            maxlength="24"
+            class="mobile:ml-4.5"
+            placeholder="New Participant"
+          />
+
+          <button class="mobile:mt-3 min-h-12" @click="addPerson">Add Person</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>{{ formatNames() }}</div>
+
+  <div v-if="people.length > 1" class="card">
+    <!-- <div class="card"> -->
+    <h2>Enter Expenses:</h2>
+    <div>
+      <div class="mobile:flex-col self-center inputs-container">
+        <select
+          v-model="selectedPerson"
+          id="people"
+          class="mobile:ml-4.5 border-4 p-2 min-w-[8.5rem] people-dropdown"
+        >
+          <option v-if="!selectedPerson" value="" hidden selected>
+            Who paid?
+          </option>
+          <option v-for="person in people" :key="person" :value="person">
+            {{ person }}
+          </option>
+        </select>
+        <div class="mobile:mt-3.5 flex flex-row">
+          <span class="self-center dollarPrefix">$</span>
+          <input
+            v-model="paidAmount"
+            @keydown.enter="addExpense"
+            type="text"
+            class="mobile:ml-1 expense-input"
+            placeholder="How much?"
+          />
+        </div>
+        <input
+          v-model="notes"
+          @keydown.enter="addExpense"
+          type="text"
+          class="mobile:ml-5 mobile:mt-3 notes-inputs"
+          placeholder="Details (opt)"
+        />
+        <button
+          @click="addExpense"
+          class="mobile:mt-3 min-h-12"
+          :disabled="
+            !selectedPerson || !isNumber(paidAmount) || paidAmount <= 0
+          "
+        >
+          Add Expense
+        </button>
+      </div>
+    </div>
+    <div v-if="expenses.length > 0" class="all-expenses">
+      <div class="min-w-[50%] all-expenses-list">
+        <div>
+          <h3 class="all-expenses-header">All Expenses:</h3>
+        </div>
+        <div
+          v-for="(expense, index) in expenses"
+          :key="index"
+          class="expense-entry"
+        >
+          <span class="expense-text">
+            <strong>{{ expense.person }}</strong> paid: ${{ expense.amount
+            }}{{ expense.notes ? ` (${expense.notes})` : "" }}
+          </span>
+          <button @click="removeExpense(index)" class="m-0 p-0 min-w-6.5 max-w-6.5 delete-btn">
+            <span class="p-0 m-0"> &times; </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div v-if="expenses.length > 0" class="spend-list-container">
+      <div class="min-w-[70%] spend-list">
+        <div v-for="(expense, name) in mappedExpenses" :key="name">
+          <strong>{{ name }}</strong> spent: ${{ expense }}
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2 v-if="expenses.length > 0 && totalSpent / people.length">
+        Everyone should pay ${{
+          parseFloat((totalSpent / people.length).toFixed(2))
+        }}
+      </h2>
+      <template class="spend-list-container">
+        <div
+          v-if="expenses.length > 0 && totalSpent / people.length"
+          class="min-w-[80%] pay-list"
+        >
+          <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
+            {{ settlement }}
+          </div>
+        </div>
+      </template>
+    </div>
+    <div>
+      <button class="clear-btn min-h-12" @click="showModal = true">Clear All</button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
+import ConfirmModal from './ConfirmModal.vue';
 
-defineProps<{ msg: string }>();
+defineProps<{
+  msg: string
+}>();
 
 const people = ref<string[]>(
   JSON.parse(localStorage.getItem("people") || "[]"),
@@ -10,6 +134,8 @@ const personName = ref("");
 const selectedPerson = ref("");
 const paidAmount = ref();
 const notes = ref("");
+
+const showModal = ref(false);
 
 const addPerson = () => {
   //push whatever's in the input field to the people array
@@ -170,6 +296,7 @@ const clearAll = () => {
   balances.value = {};
   mappedExpenses.value = {};
   totalSpent = 0;
+  showModal.value = false;
 };
 
 watch(
@@ -190,125 +317,6 @@ onMounted(() => {
   calculateOutstanding();
 });
 </script>
-
-<template>
-  <div id="app">
-    <div>
-      <div>
-        <h1>Expense Splitter</h1>
-
-        <!-- add participants -->
-        <div class="items-center mobile:flex mobile:flex-col">
-          <input
-            v-model="personName"
-            @keydown.enter="addPerson"
-            type="text"
-            maxlength="24"
-            class="mobile:ml-4.5"
-            placeholder="New Participant"
-          />
-
-          <button class="mobile:mt-3 min-h-12" @click="addPerson">Add Person</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div>{{ formatNames() }}</div>
-
-  <div v-if="people.length > 1" class="card">
-    <!-- <div class="card"> -->
-    <h2>Enter Expenses:</h2>
-    <div>
-      <div class="mobile:flex-col self-center inputs-container">
-        <select
-          v-model="selectedPerson"
-          id="people"
-          class="mobile:ml-4.5 border-4 p-2 min-w-[8.5rem] people-dropdown"
-        >
-          <option v-if="!selectedPerson" value="" hidden selected>
-            Who paid?
-          </option>
-          <option v-for="person in people" :key="person" :value="person">
-            {{ person }}
-          </option>
-        </select>
-        <div class="mobile:mt-3.5 flex flex-row">
-          <span class="self-center dollarPrefix">$</span>
-          <input
-            v-model="paidAmount"
-            @keydown.enter="addExpense"
-            type="text"
-            class="mobile:ml-1 expense-input"
-            placeholder="How much?"
-          />
-        </div>
-        <input
-          v-model="notes"
-          @keydown.enter="addExpense"
-          type="text"
-          class="mobile:ml-5 mobile:mt-3 notes-inputs"
-          placeholder="Details (opt)"
-        />
-        <button
-          @click="addExpense"
-          class="mobile:mt-3 min-h-12"
-          :disabled="
-            !selectedPerson || !isNumber(paidAmount) || paidAmount <= 0
-          "
-        >
-          Add Expense
-        </button>
-      </div>
-    </div>
-    <div v-if="expenses.length > 0" class="all-expenses">
-      <div class="min-w-[50%] all-expenses-list">
-        <div>
-          <h3 class="all-expenses-header">All Expenses:</h3>
-        </div>
-        <div
-          v-for="(expense, index) in expenses"
-          :key="index"
-          class="expense-entry"
-        >
-          <span class="expense-text">
-            <strong>{{ expense.person }}</strong> paid: ${{ expense.amount
-            }}{{ expense.notes ? ` (${expense.notes})` : "" }}
-          </span>
-          <button @click="removeExpense(index)" class="m-0 p-0 min-w-6.5 max-w-6.5 delete-btn">
-            <span class="p-0 m-0"> &times; </span>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div v-if="expenses.length > 0" class="spend-list-container">
-      <div class="min-w-[70%] spend-list">
-        <div v-for="(expense, name) in mappedExpenses" :key="name">
-          <strong>{{ name }}</strong> spent: ${{ expense }}
-        </div>
-      </div>
-    </div>
-    <div>
-      <h2 v-if="expenses.length > 0 && totalSpent / people.length">
-        Everyone should pay ${{
-          parseFloat((totalSpent / people.length).toFixed(2))
-        }}
-      </h2>
-      <template class="spend-list-container">
-        <div
-          v-if="expenses.length > 0 && totalSpent / people.length"
-          class="min-w-[80%] pay-list"
-        >
-          <div v-for="settlement in cancelOutDebts(balances)" :key="settlement">
-            {{ settlement }}
-          </div>
-        </div>
-      </template>
-    </div>
-    <div>
-      <button class="clear-btn min-h-12" @click="clearAll">Clear All</button>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .read-the-docs {

@@ -10,6 +10,8 @@ export default {
       },
       colors: {
         "murky-purple": "#42354d",
+        "almost-black": "#1a1a1a",
+        "almost-white": "#f2f2f2",
       },
       screens: {
         desktop: { min: "1440px" },
