@@ -196,21 +196,23 @@ option:focus {
 }
 
 .delete-btn {
+  border: 1px solid transparent;
   height: 1.6rem;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 0.9rem;
   font-weight: bold;
-  border: none;
   color: white;
   cursor: pointer;
   padding: 0;
   text-align: center;
   margin-left: auto;
+  transition: border-color 0.25s;
 }
 
 .delete-btn:hover {
+  border-color: #646cff;
   filter: drop-shadow(0 0 0.8em #646cffaa);
 }
 
